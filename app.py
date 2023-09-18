@@ -14,15 +14,15 @@ app.title('Signing in...')
 conn = sqlite3.connect('barcode.db')
 c = conn.cursor()
 
-# c.execute("""CREATE TABLE stock
-#           (
-#           productName text,
-#           barcode text, 
-#           quantity int
-#           )"""
-#         )
+c.execute("""CREATE TABLE stock
+          (
+          productName text,
+          barcode text, 
+          quantity int
+          )"""
+        )
 
-# conn.commit()
+conn.commit()
 # Functions
 
 

@@ -4,7 +4,7 @@ import os
 import sqlite3
 
 customtkinter.set_appearance_mode('system')
-customtkinter.set_default_color_theme('green')
+customtkinter.set_default_color_theme('blue')
 
 # Beginning of the app
 app = customtkinter.CTk()
@@ -14,25 +14,36 @@ app.title('Signing in...')
 conn = sqlite3.connect('barcode.db')
 c = conn.cursor()
 
-c.execute("""CREATE TABLE stock
-          (
-          productName text,
-          barcode text, 
-          quantity int
-          )"""
-        )
+table_name = 'stock'
+
+# Check if the table exists
+c.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
+table_exists = c.fetchone()
+
+if table_exists:
+    print(f"The table '{table_name}' exists.")
+else:
+    print(f"The table '{table_name}' does not exist.")
+    print(f"Creating table: '{table_name}'...")
+    
+    c.execute(f"""CREATE TABLE '{table_name}'
+            (
+            productName text,
+            barcode text, 
+            quantity int
+            )"""
+            )
 
 conn.commit()
 # Functions
 
 
 def de():
+
     warningText = customtkinter.CTkLabel(app, text="Something went wrong,\nplease check your password and username...", text_color="#ed4337", font=('', 12))
     checkUserName = username.get()
     checkPwd = pwd.get()
-
-
-    
+ 
     def submit():
 
         conn = sqlite3.connect('barcode.db')
@@ -42,7 +53,16 @@ def de():
         p_code = productBarCode.get()
         p_qty =  productQuantity.get()
 
-        if len(p_name) or len(p_code) or len(p_qty) == 0:
+        if not p_name:
+            print('no value for product name')
+            warningLabel = customtkinter.CTkLabel(main, text="Noticed empty fields", text_color="#ed4337")
+            warningLabel.pack()
+        elif not p_code:
+            print('no value for product code')
+            warningLabel = customtkinter.CTkLabel(main, text="Noticed empty fields", text_color="#ed4337")
+            warningLabel.pack()
+        elif not p_qty:
+            print('no value for product quantity')
             warningLabel = customtkinter.CTkLabel(main, text="Noticed empty fields", text_color="#ed4337")
             warningLabel.pack()
         else:
@@ -69,14 +89,14 @@ def de():
 
             c.execute("SELECT *, oid FROM stock")
             data = c.fetchall()
-            print(data)
+            formatedData = str(data)[1:1]
+            print(formatedData)
 
-            print_data = ''
+            # print_data = ''
+            # for i in data:
+            #     print_data += str(i) + '\n'
 
-            for i in data:
-                print_data += str(i) + '\n'
-
-            query_label = customtkinter.CTkLabel(main, text=print_data)
+            query_label = customtkinter.CTkLabel(frameForOutput, text=formatedData)
             query_label.pack()
 
 
@@ -88,16 +108,19 @@ def de():
         productName.place(rely=0.2, relx=0.05)
 
         productBarCode = customtkinter.CTkEntry(main, width=320, height=30, placeholder_text="Product Code")
-        productBarCode.place(rely=0.3, relx=0.05)
+        productBarCode.place(rely=0.27, relx=0.05)
 
         productQuantity = customtkinter.CTkEntry(main, width=320, height=30, placeholder_text="Product Quantity")
-        productQuantity.place(rely=0.4, relx=0.05)
+        productQuantity.place(rely=0.34, relx=0.05)
 
         dataEntryBtn = customtkinter.CTkButton(master=main, text="Enter", font=('Garamond', 15), command=submit)
-        dataEntryBtn.place(relx=0.58, rely=0.22, anchor=customtkinter.CENTER)
+        dataEntryBtn.place(relx=0.16, rely=0.42, anchor=customtkinter.CENTER)
 
         dataListOut = customtkinter.CTkButton(master=main, text="List Out", command=query, font=('Garamond', 15))
-        dataListOut.place(relx=0.77, rely=0.22, anchor=customtkinter.CENTER)
+        dataListOut.place(relx=0.36, rely=0.42, anchor=customtkinter.CENTER)
+
+        frameForOutput = customtkinter.CTkScrollableFrame(main, width=300, height=500)
+        frameForOutput.place(relx=0.5, rely=0.2)
 
         
 

@@ -1,6 +1,5 @@
 from tkinter import *
 import customtkinter
-import os
 import sqlite3
 
 customtkinter.set_appearance_mode('light')
@@ -11,7 +10,7 @@ app = customtkinter.CTk()
 app.geometry('350x450')
 app.title('Signing in...')
 
-conn = sqlite3.connect('barcode.db')
+conn = sqlite3.connect('example.db')
 c = conn.cursor()
 
 table_name = 'stock'
@@ -46,7 +45,7 @@ def de():
  
     def submit():
 
-        conn = sqlite3.connect('barcode.db')
+        conn = sqlite3.connect('example.db')
         c = conn.cursor()
 
         p_name = productName.get()
@@ -63,15 +62,15 @@ def de():
         if not p_name:
             print('no value for product name')
             warningLabel = customtkinter.CTkLabel(main, text="Noticed empty fields", text_color="#ed4337")
-            warningLabel.place(relx=0.2, rely=0.47)
+            warningLabel.place(relx=0.17, rely=0.5)
         elif not p_code:
             print('no value for product code')
             warningLabel = customtkinter.CTkLabel(main, text="Noticed empty fields", text_color="#ed4337")
-            warningLabel.place(relx=0.2, rely=0.47)
+            warningLabel.place(relx=0.2, rely=0.5)
         elif not p_qty:
             print('no value for product quantity')
             warningLabel = customtkinter.CTkLabel(main, text="Noticed empty fields", text_color="#ed4337")
-            warningLabel.place(relx=0.2, rely=0.47)
+            warningLabel.place(relx=0.2, rely=0.5)
         else:
             c.execute('INSERT INTO stock VALUES (:p_name, :p_code, :p_qty)',{
                 'p_name': productName.get(),
@@ -99,7 +98,7 @@ def de():
 
         def query():
 
-            conn = sqlite3.connect('barcode.db')
+            conn = sqlite3.connect('example.db')
             c = conn.cursor()
 
             c.execute("SELECT *, oid FROM stock")
